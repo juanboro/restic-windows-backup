@@ -4,7 +4,7 @@ Simplifies the process of installation and running daily backups.
 
 ```
 cd c:\restic
-Invoke-Expression (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/jdkrause/restic-windows-backup/mymaster/update.ps1" -UseBasicParsing).Content
+Invoke-Expression (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/juanboro/restic-windows-backup/mymaster/update.ps1" -UseBasicParsing).Content
 ```
 
 # Features
