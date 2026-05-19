@@ -2,6 +2,11 @@
 Powershell scripts to run Restic backups on Windows.
 Simplifies the process of installation and running daily backups.
 
+```
+cd c:\restic
+Invoke-Expression (Invoke-WebRequest -Uri "https://raw.githubusercontent.com/jdkrause/restic-windows-backup/mymaster/update.ps1" -UseBasicParsing).Content
+```
+
 # Features
 * **VSS (Volume Snapshot Service) support** - backup everything, don't worry about what files are open/in-use
 * **Removable, External Drives** - drives can be identified by their volume labels or serial numbers, making it easy to backup drives that occasionally aren't there or change drive letter.
