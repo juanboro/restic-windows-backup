@@ -20,7 +20,7 @@
 
 .NOTES
     Example 1 - update scripts to the latest tagged release
-    .\update.ps1
+    .\update.ps1 <- updated to be branch: mymaster 
 
     Example 2 - update scripts from a branch
     .\update.ps1 -Mode branch -BranchName 'release_1.8'
@@ -35,10 +35,10 @@
 param(
     [Parameter(Mandatory = $false)]
     [ValidateSet("release", "branch")]
-    [string]$Mode = "release",
+    [string]$Mode = "branch",
 
     [Parameter(Mandatory = $false)]
-    [string]$BranchName = "main",
+    [string]$BranchName = "mymaster",
 
     [Parameter(Mandatory = $false)]
     [string]$InstallPath = $null
@@ -49,7 +49,7 @@ param(
 # ====================================
 
 # GitHub repository details
-$repoOwner = "kmwoley"
+$repoOwner = "juanboro"
 $repoName  = "restic-windows-backup"
 
 # User-Agent header (GitHub requires this)
