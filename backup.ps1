@@ -94,13 +94,30 @@ function Set-BackupState {
 
 # unlock the repository if need be
 function Invoke-Unlock {
-    Param($SuccessLog, $ErrorLog)
+    Param($skipshared, $SuccessLog, $ErrorLog)
 
     $locks = Invoke-Expression "$Script:ResticExe list locks --no-lock -q 3>&1 2>> $ErrorLog"
     if($LASTEXITCODE) {
         "[[Unlock]] Warning: unable to list locks." | Tee-Object -Append $ErrorLog
     }
     if($locks.Length -gt 0) {
+        if ($skipshared) {
+            $ok=$true
+            foreach ($lock in $locks) {
+                $lockinfo = Invoke-Expression "$Script:ResticExe cat lock --no-lock -q $lock 3>&1 2>> $ErrorLog"
+                if($LASTEXITCODE) {
+                    "[[Unlock]] Warning: unable to cat lockid: $lock." | Tee-Object -Append $ErrorLog
+                    $ok=$false
+                }
+                if ($lockinfo -match '"exclusive": true') {
+                    $ok=$false
+                }
+            }
+            if ($ok) {
+                return $true
+            }
+        }
+
         # check if we are allowed to unlock
         if ($AutoUnlock -ne $false) {
             # unlock the repository (assumes this machine is the only one that will ever use it)
@@ -585,7 +602,7 @@ function Invoke-Main {
         $repository_available = Invoke-ConnectivityCheck $success_log $error_log
         if($repository_available -eq $true) {
             # check if we can proceed based on lock state
-            $unlocked = Invoke-Unlock $success_log $error_log
+            $unlocked = Invoke-Unlock $true $success_log $error_log
             
             if ($unlocked) {
                 $backup_success = Invoke-Backup $success_log $error_log
@@ -658,7 +675,7 @@ function Invoke-Main {
         $repository_available = Invoke-ConnectivityCheck $success_log $error_log
         if($repository_available -eq $true) {
             # check for locks during maintenance as well
-            $unlocked = Invoke-Unlock $success_log $error_log
+            $unlocked = Invoke-Unlock $false $success_log $error_log
             
             if ($unlocked) {
                 $maintenance_success = Invoke-Maintenance $success_log $error_log
